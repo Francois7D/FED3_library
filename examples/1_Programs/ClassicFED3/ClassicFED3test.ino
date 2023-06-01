@@ -25,7 +25,7 @@
   legal wording: https://creativecommons.org/licenses/by-sa/3.0/legalcode
   Copyright (c) 2020 Lex Kravitz
 
-*/
+*/test
 
 #include <FED3.h>                //Include the FED3 library 
 String sketch = "Classic";       //Unique identifier text for each sketch
