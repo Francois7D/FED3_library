@@ -36,6 +36,12 @@ FED3 fed3 (sketch);              //Start the FED3 object
 int poke_num = 0;                                      // this variable is the number of pokes since last pellet
 int pokes_required = 1;                                // increase the number of pokes required each time a pellet is received using an exponential equation
 
+//variables added for ClosedEconomy_PR1
+int pellets_in_current_block = 0;                      //pellet number in current block
+unsigned long poketime = 0;                            //time of poke
+int resetInterval = 1800;                              //number of seconds without a poke to reset
+
+
 void setup() {
   fed3.ClassicFED3 = true;
   fed3.begin();                                        //Setup the FED3 hardware
