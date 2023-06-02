@@ -255,7 +255,6 @@ void loop() {
 
   if (fed3.FEDmode == 12) {
     fed3.sessiontype = "ClEco_PR1";                       //The text in "sessiontype" will appear on the screen and in the logfile
-    fed3.run();                                          //Call fed.run at least once per loop
       checkReset();                                        //Check if it's time to reset to FR1
       if (fed3.Left) {                                     //If left poke is triggered
         fed3.logLeftPoke();                                //log Left poke
