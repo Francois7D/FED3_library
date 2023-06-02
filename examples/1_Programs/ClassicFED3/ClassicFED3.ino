@@ -16,6 +16,7 @@
   // 9 Optogenetic stimulation
   // 10 Optogenetic stimulation (reversed)
   // 11 Timed free feeding
+  // 12 ClosedEconomy_PR1 
 
   alexxai@wustl.edu
   December, 2020
@@ -244,4 +245,82 @@ void loop() {
   //                                                                    Call fed.run at least once per loop
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   fed3.run();
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                                                     Mode 12: Test addition of ClosedEconomy_PR1 (another program) as part of this program 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  if (fed3.FEDmode == 12) {
+    fed3.sessiontype = "ClEco_PR1";                       //The text in "sessiontype" will appear on the screen and in the logfile
+    fed3.run();                                          //Call fed.run at least once per loop
+      checkReset();                                        //Check if it's time to reset to FR1
+      if (fed3.Left) {                                     //If left poke is triggered
+        fed3.logLeftPoke();                                //log Left poke
+        poke_num++;                                        //increment poke number.
+        poketime = fed3.unixtime;                          //update the current time of poke
+        serialoutput();                                    //print data to the Serial monitor - EnableSleep must be false to use Serial monitor
+        if (poke_num == pokes_required) {                  //check if current FR has been achieved
+          fed3.ConditionedStimulus();                      //Deliver conditioned stimulus (tone and lights)
+          pellets_in_current_block++;                      //increment the pellet number by 1
+          fed3.BlockPelletCount = pellets_in_current_block;
+          fed3.Feed();                                     //Deliver pellet
+          fed3.BNC(500, 1);                                //Send 500ms pulse to the BNC output when pellet is detected (move this line to deliver this pulse elsewhere)
+          pokes_required += 1;                             //Edit this line to change the PR incremementing formula.  Default is for each pellet add 1 to the pokes required.
+          fed3.FR = pokes_required;                        //Update the FR requirement in the functions in the FED3 library
+          poke_num = 0;                                    //reset poke_num to 0
+        }
+      }
+
+      if (fed3.Right) {                                    //If right poke is triggered
+        fed3.logRightPoke();                               //log right poke
+      }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    //if more than 30 mins has passed since last poke -- reset the block and parameters
+    //////////////////////////////////////////////////////////////////////////////////////
+    void checkReset() {
+      if (fed3.unixtime - poketime >= resetInterval) {   //if the reset interval has elapsed since last poke
+        pellets_in_current_block = 0;
+        fed3.BlockPelletCount = pellets_in_current_block;
+        poke_num = 0;
+        pokes_required = 1;
+        fed3.FR = pokes_required;
+        Serial.println("          ");
+        Serial.println("****");                           //print **** on the serial monitor
+
+        fed3.pixelsOn(5, 5, 5, 5);
+        delay(200);
+        fed3.pixelsOff();
+        poketime = fed3.unixtime;                        //store the current time of poke
+      }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Use Serial.print statements for debugging
+    //////////////////////////////////////////////////////////////////////////////////////
+    void serialoutput() {
+      Serial.print("Unixtime: ");
+      Serial.println(fed3.unixtime);
+      Serial.println("Pellets   RightPokes   LeftPokes   Poke_Num  Pel  Pokes_Required  PokeTime   Reset  FR");
+      Serial.print("   ");
+      Serial.print(fed3.PelletCount);
+      Serial.print("          ");
+      Serial.print(fed3.RightCount);
+      Serial.print("          ");
+      Serial.print(fed3.LeftCount);
+      Serial.print("          ");
+      Serial.print(poke_num);
+      Serial.print("          ");
+      Serial.print(pellets_in_current_block);
+      Serial.print("          ");
+      Serial.print(pokes_required);
+      Serial.print("       ");
+      Serial.print(poketime);
+      Serial.print("          ");
+      Serial.print(fed3.FR);
+      Serial.println(" ");
+      Serial.println(" ");
+
+  }
 }
