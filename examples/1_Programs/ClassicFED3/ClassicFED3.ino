@@ -275,52 +275,52 @@ void loop() {
         fed3.logRightPoke();                               //log right poke
       }
     }
+}
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    //if more than 30 mins has passed since last poke -- reset the block and parameters
-    //////////////////////////////////////////////////////////////////////////////////////
-    void checkReset() {
-      if (fed3.unixtime - poketime >= resetInterval) {   //if the reset interval has elapsed since last poke
-        pellets_in_current_block = 0;
-        fed3.BlockPelletCount = pellets_in_current_block;
-        poke_num = 0;
-        pokes_required = 1;
-        fed3.FR = pokes_required;
-        Serial.println("          ");
-        Serial.println("****");                           //print **** on the serial monitor
+//////////////////////////////////////////////////////////////////////////////////////
+//if more than 30 mins has passed since last poke -- reset the block and parameters
+//////////////////////////////////////////////////////////////////////////////////////
+void checkReset() {
+  if (fed3.unixtime - poketime >= resetInterval) {   //if the reset interval has elapsed since last poke
+    pellets_in_current_block = 0;
+    fed3.BlockPelletCount = pellets_in_current_block;
+    poke_num = 0;
+    pokes_required = 1;
+    fed3.FR = pokes_required;
+    Serial.println("          ");
+    Serial.println("****");                           //print **** on the serial monitor
 
-        fed3.pixelsOn(5, 5, 5, 5);
-        delay(200);
-        fed3.pixelsOff();
-        poketime = fed3.unixtime;                        //store the current time of poke
-      }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Use Serial.print statements for debugging
-    //////////////////////////////////////////////////////////////////////////////////////
-    void serialoutput() {
-      Serial.print("Unixtime: ");
-      Serial.println(fed3.unixtime);
-      Serial.println("Pellets   RightPokes   LeftPokes   Poke_Num  Pel  Pokes_Required  PokeTime   Reset  FR");
-      Serial.print("   ");
-      Serial.print(fed3.PelletCount);
-      Serial.print("          ");
-      Serial.print(fed3.RightCount);
-      Serial.print("          ");
-      Serial.print(fed3.LeftCount);
-      Serial.print("          ");
-      Serial.print(poke_num);
-      Serial.print("          ");
-      Serial.print(pellets_in_current_block);
-      Serial.print("          ");
-      Serial.print(pokes_required);
-      Serial.print("       ");
-      Serial.print(poketime);
-      Serial.print("          ");
-      Serial.print(fed3.FR);
-      Serial.println(" ");
-      Serial.println(" ");
-
+    fed3.pixelsOn(5, 5, 5, 5);
+    delay(200);
+    fed3.pixelsOff();
+    poketime = fed3.unixtime;                        //store the current time of poke
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Use Serial.print statements for debugging
+//////////////////////////////////////////////////////////////////////////////////////
+void serialoutput() {
+  Serial.print("Unixtime: ");
+  Serial.println(fed3.unixtime);
+  Serial.println("Pellets   RightPokes   LeftPokes   Poke_Num  Pel  Pokes_Required  PokeTime   Reset  FR");
+  Serial.print("   ");
+  Serial.print(fed3.PelletCount);
+  Serial.print("          ");
+  Serial.print(fed3.RightCount);
+  Serial.print("          ");
+  Serial.print(fed3.LeftCount);
+  Serial.print("          ");
+  Serial.print(poke_num);
+  Serial.print("          ");
+  Serial.print(pellets_in_current_block);
+  Serial.print("          ");
+  Serial.print(pokes_required);
+  Serial.print("       ");
+  Serial.print(poketime);
+  Serial.print("          ");
+  Serial.print(fed3.FR);
+  Serial.println(" ");
+  Serial.println(" ");
+
 }
