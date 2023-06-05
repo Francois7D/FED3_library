@@ -1599,6 +1599,7 @@ void FED3::FED3MenuScreen() {
   if (FEDmode == 9) display.print("Mode 10");
   if (FEDmode == 10) display.print("Mode 11");
   if (FEDmode == 11) display.print("Mode 12");
+  if (FEDmode == 12) display.print("Mode 13");
   DisplayMouse();
   display.clearDisplay();
   display.refresh();
@@ -1625,7 +1626,7 @@ void FED3::SelectMode() {
     tone (BUZZER, 2500, 200);
     colorWipe(strip.Color(2, 0, 2), 40); // Color wipe
     colorWipe(strip.Color(0, 0, 0), 20); // OFF
-    if (FEDmode == -1) FEDmode = 11;
+    if (FEDmode == -1) FEDmode = 12;
   }
 
   //If Right Poke is activated
@@ -1635,11 +1636,11 @@ void FED3::SelectMode() {
     tone (BUZZER, 2500, 200);
     colorWipe(strip.Color(2, 2, 0), 40); // Color wipe
     colorWipe(strip.Color(0, 0, 0), 20); // OFF
-    if (FEDmode == 12) FEDmode = 0;
+    if (FEDmode == 13) FEDmode = 0;
   }
 
   if (FEDmode < 0) FEDmode = 0;
-  if (FEDmode > 11) FEDmode = 11;
+  if (FEDmode > 12) FEDmode = 12;
 
   display.fillRect (10, 48, 200, 50, WHITE);  //erase the selected program text
   display.setCursor(10, 60);  //Display selected program
@@ -1658,6 +1659,7 @@ void FED3::SelectMode() {
     if (FEDmode == 9) display.print("Self-Stim");
     if (FEDmode == 10) display.print("Self-Stim (Rev)");
     if (FEDmode == 11) display.print("Timed feeding");
+    if (FEDmode == 12) display.print("ClosedEconomy_PR1");
     display.refresh();
   }
   
@@ -1675,6 +1677,7 @@ void FED3::SelectMode() {
     if (FEDmode == 9) display.print("Mode 10");
     if (FEDmode == 10) display.print("Mode 11");
     if (FEDmode == 11) display.print("Mode 12");
+    if (FEDmode == 12) display.print("Mode 12");
     display.refresh();
   }
   
@@ -1708,6 +1711,7 @@ void FED3::ClassicMenu () {
   //  9 self-stim
   //  10 self-stim (reversed)
   //  11 time feeding
+  //  12 ClosedEconomy_PR1
 
   // Set FR based on FEDmode
   if (FEDmode == 0) FR = 0;  // free feeding
@@ -1749,6 +1753,7 @@ void FED3::ClassicMenu () {
   if (FEDmode == 9) display.print("Self-Stim");
   if (FEDmode == 10) display.print("Self-Stim (Rev)");
   if (FEDmode == 11) display.print("Timed feeding");
+  if (FEDmode == 12) display.print("ClosedEconomy_PR1");
   
   DisplayMouse();
   display.clearDisplay();
