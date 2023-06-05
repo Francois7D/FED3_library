@@ -236,7 +236,7 @@ void loop() {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //                                                                     Mode 11: Timed Feeding
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  if (fed3.FEDmode == 11) {
+  if (fed3.FEDmode == 12) {
     fed3.sessiontype = "Timed";                         //The text in "sessiontype" will appear on the screen and in the logfile
     fed3.DisplayPokes = false;                          //Turn off poke indicators for free feeding mode
     fed3.DisplayTimed = true;                           //Display timed feeding info
@@ -253,7 +253,7 @@ void loop() {
   //                                                                     Mode 12: Test addition of ClosedEconomy_PR1 (another program) as part of this program 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  if (fed3.FEDmode == 12) {
+  if (fed3.FEDmode == 11) {
     fed3.sessiontype = "ClEco_PR1";                       //The text in "sessiontype" will appear on the screen and in the logfile
       checkReset();                                        //Check if it's time to reset to FR1
       if (fed3.Left) {                                     //If left poke is triggered
