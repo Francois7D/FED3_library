@@ -30,9 +30,14 @@
 #include "Arduino.h"
 #include "FED3.h"
 
+#include "FED3WAN.h"
+
 //  Start FED3 and RTC objects
 FED3 *pointerToFED3;
-RTC_PCF8523 rtc; 
+RTC_PCF8523 rtc;
+
+//  Start the FED3WAN object
+FED3WAN fed3wan;
 
 //  Interrupt handlers
 static void outsidePelletTriggerHandler(void) {
@@ -84,6 +89,9 @@ void FED3::logLeftPoke(){
     else{
       Event = "Left";
     }
+    if (LoRaTransmit)
+      fed3wan.run(pointerToFED3); //Tx data via uart
+
     logdata();
     Left = false;
   }
@@ -105,6 +113,9 @@ void FED3::logRightPoke(){
     else{
       Event = "Right";
     }
+    if (LoRaTransmit)
+      fed3wan.run(pointerToFED3); //Tx data via uart
+
     logdata();
     Right = false; 
   }
@@ -232,7 +243,10 @@ void FED3::Feed(int pulse, bool pixelsoff) {
       DateTime now = rtc.now();
       interPelletInterval = now.unixtime() - lastPellet;  //calculate time in seconds since last pellet logged
       lastPellet  = now.unixtime();
-     
+
+      if (LoRaTransmit)
+        fed3wan.run(pointerToFED3); //Tx data via uart
+
       logdata();
       numMotorTurns = 0; //reset numMotorTurns
       PelletAvailable = true;
@@ -541,10 +555,10 @@ void FED3::Blink(byte PIN, byte DELAY_MS, byte loops) {
 //Simple function for sending square wave pulses to the BNC port
 void FED3::BNC(int DELAY_MS, int loops) {
   for (int i = 0; i < loops; i++)  {
-    digitalWrite(BNC_OUT, HIGH);
+    digitalWrite(BNC_Out, HIGH);
     digitalWrite(GREEN_LED, HIGH);
     delay(DELAY_MS);
-    digitalWrite(BNC_OUT, LOW);
+    digitalWrite(BNC_Out, LOW);
     digitalWrite(GREEN_LED, LOW);
     delay(DELAY_MS);
   }
@@ -553,36 +567,35 @@ void FED3::BNC(int DELAY_MS, int loops) {
 //More advanced function for controlling pulse width and frequency for the BNC port
 void FED3::pulseGenerator(int pulse_width, int frequency, int repetitions){  // freq in Hz, width in ms, loops in number of times
   for (byte j = 0; j < repetitions; j++) {
-    digitalWrite(BNC_OUT, HIGH);
+    digitalWrite(BNC_Out, HIGH);
     digitalWrite(GREEN_LED, HIGH);
     delay(pulse_width);  //pulse high for width
-    digitalWrite(BNC_OUT, LOW);
+    digitalWrite(BNC_Out, LOW);
     digitalWrite(GREEN_LED, LOW);
     long temp_delay = (1000 / frequency) - pulse_width;
     if (temp_delay < 0) temp_delay = 0;  //if temp delay <0 because parameters are set wrong, set it to 0 so FED3 doesn't crash O_o
-    delay(temp_delay); //pin low 
+    delay(temp_delay); //pin low
   }
 }
 
 void FED3::ReadBNC(bool blinkGreen){
-    pinMode(BNC_OUT, INPUT_PULLDOWN);
+    pinMode(BNC_Out, INPUT_PULLDOWN);
     BNCinput=false;
-    if (digitalRead(BNC_OUT) == HIGH)
-	{
-	  delay (1);
-	  if (digitalRead(BNC_OUT) == HIGH)
-	  {
-		if (blinkGreen == true)
-		{
-		  digitalWrite(GREEN_LED, HIGH);
-		  delay (25);
-		  digitalWrite(GREEN_LED, LOW);
-		}		  
-	     BNCinput=true;
-	  }
+    if (digitalRead(BNC_Out) == HIGH)
+    {
+      delay (1);
+      if (digitalRead(BNC_Out) == HIGH)
+      {
+        if (blinkGreen == true)
+        {
+          digitalWrite(GREEN_LED, HIGH);
+          delay (25);
+          digitalWrite(GREEN_LED, LOW);
+        }
+        BNCinput=true;
+      }
     }
 }
-    
 
 /**************************************************************************************************************************************************
                                                                                                Display functions
@@ -1466,6 +1479,9 @@ void FED3::ReleaseMotor () {
 /**************************************************************************************************************************************************
                                                                                                Startup Functions
 **************************************************************************************************************************************************/
+//Constructor
+FED3::FED3(void) {};
+
 //Import Sketch variable from the Arduino script
 FED3::FED3(String sketch) {
   sessiontype = sketch;
@@ -1495,7 +1511,14 @@ void FED3::begin() {
   pinMode(A3, OUTPUT);
   pinMode(A4, OUTPUT);
   pinMode(A5, OUTPUT);
-  pinMode(BNC_OUT, OUTPUT);
+
+  if (LoRaTransmit)
+    fed3wan.begin();
+  else
+    {
+    BNC_Out = A0;
+    pinMode(BNC_Out, OUTPUT);
+    }
 
   // Initialize RTC
   rtc.begin();
@@ -1576,7 +1599,6 @@ void FED3::FED3MenuScreen() {
   if (FEDmode == 9) display.print("Mode 10");
   if (FEDmode == 10) display.print("Mode 11");
   if (FEDmode == 11) display.print("Mode 12");
-  if (FEDmode == 12) display.print("Mode 13");
   DisplayMouse();
   display.clearDisplay();
   display.refresh();
@@ -1603,7 +1625,7 @@ void FED3::SelectMode() {
     tone (BUZZER, 2500, 200);
     colorWipe(strip.Color(2, 0, 2), 40); // Color wipe
     colorWipe(strip.Color(0, 0, 0), 20); // OFF
-    if (FEDmode == -1) FEDmode = 12;
+    if (FEDmode == -1) FEDmode = 11;
   }
 
   //If Right Poke is activated
@@ -1613,11 +1635,11 @@ void FED3::SelectMode() {
     tone (BUZZER, 2500, 200);
     colorWipe(strip.Color(2, 2, 0), 40); // Color wipe
     colorWipe(strip.Color(0, 0, 0), 20); // OFF
-    if (FEDmode == 13) FEDmode = 0;
+    if (FEDmode == 12) FEDmode = 0;
   }
 
   if (FEDmode < 0) FEDmode = 0;
-  if (FEDmode > 12) FEDmode = 12;
+  if (FEDmode > 11) FEDmode = 11;
 
   display.fillRect (10, 48, 200, 50, WHITE);  //erase the selected program text
   display.setCursor(10, 60);  //Display selected program
@@ -1636,8 +1658,6 @@ void FED3::SelectMode() {
     if (FEDmode == 9) display.print("Self-Stim");
     if (FEDmode == 10) display.print("Self-Stim (Rev)");
     if (FEDmode == 11) display.print("Timed feeding");
-    if (FEDmode == 12) display.print("ClosedEconomy_PR1");
-    
     display.refresh();
   }
   
@@ -1655,7 +1675,6 @@ void FED3::SelectMode() {
     if (FEDmode == 9) display.print("Mode 10");
     if (FEDmode == 10) display.print("Mode 11");
     if (FEDmode == 11) display.print("Mode 12");
-    if (FEDmode == 12) display.print("Mode 13");
     display.refresh();
   }
   
@@ -1689,7 +1708,6 @@ void FED3::ClassicMenu () {
   //  9 self-stim
   //  10 self-stim (reversed)
   //  11 time feeding
-  //  12 ClosedEconomy_PR1
 
   // Set FR based on FEDmode
   if (FEDmode == 0) FR = 0;  // free feeding
@@ -1731,7 +1749,6 @@ void FED3::ClassicMenu () {
   if (FEDmode == 9) display.print("Self-Stim");
   if (FEDmode == 10) display.print("Self-Stim (Rev)");
   if (FEDmode == 11) display.print("Timed feeding");
-  if (FEDmode == 12) display.print("ClosedEconomy_PR1");
   
   DisplayMouse();
   display.clearDisplay();
