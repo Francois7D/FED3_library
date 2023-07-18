@@ -130,6 +130,7 @@ class FED3 {
         void StartScreen();
         void FED3MenuScreen();
         void SetClock();
+        void SetPellet();
         
         //BNC input/output
 		void ReadBNC(bool blinkGreen);

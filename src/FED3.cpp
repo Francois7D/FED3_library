@@ -932,7 +932,7 @@ void FED3::CreateFile() {
   stopfile.close();
 
   // Name filename in format F###_MMDDYYNN, where MM is month, DD is day, YY is year, and NN is an incrementing number for the number of files initialized each day
-  strcpy(filename, "FED_____________.CSV");  // placeholder filename
+  strcpy(filename, "FED_________________.CSV");  // placeholder filename
   getFilename(filename);
 }
 
@@ -1198,6 +1198,7 @@ void FED3::error(uint8_t errno) {
 // then an incrementing number for each new file created on the same date
 void FED3::getFilename(char *filename) {
   DateTime now = rtc.now();
+  PelletType = '????'
 
   filename[3] = FED / 100 + '0';
   filename[4] = FED / 10 + '0';
@@ -1208,10 +1209,11 @@ void FED3::getFilename(char *filename) {
   filename[10] = now.day() % 10 + '0';
   filename[11] = (now.year() - 2000) / 10 + '0';
   filename[12] = (now.year() - 2000) % 10 + '0';
-  filename[16] = '.';
-  filename[17] = 'C';
-  filename[18] = 'S';
-  filename[19] = 'V';
+  filename[16:20] = PelletType
+  filename[20] = '.';
+  filename[21] = 'C';
+  filename[22] = 'S';
+  filename[23] = 'V';
   for (uint8_t i = 0; i < 100; i++) {
     filename[14] = '0' + i / 10;
     filename[15] = '0' + i % 10;
@@ -1338,6 +1340,20 @@ void FED3::SetDeviceNumber() {
           display.refresh();
         }
       }
+
+      ///////////////////////////////////
+      ///////  ADJUST PELLET TYPE ///////
+      while (millis() - EndTime < 3000) { 
+        SetPellet();
+        delay (10);
+      }
+
+      display.setCursor(5, 105);
+      display.println("...PelletType is set!");
+      display.refresh();
+      delay (1000);
+
+
       writeFEDmode();
       writeConfigFile();
       NVIC_SystemReset();      // processor software reset
@@ -1396,6 +1412,20 @@ void FED3::SetClock(){
     EndTime = millis();
   }
 }
+
+//set PelletType
+void FED3::SetPellet(){
+  display.print ("LeftPoke if Sucrose, RightPoke if Protein");
+  if (digitalRead(LEFT_POKE) == LOW) {
+    tone (BUZZER, 800, 1);
+    PelletType = 'Sucr'
+    EndTime = millis();
+    }
+  if (digitalRead(RIGHT_POKE) == LOW) {
+    tone (BUZZER, 800, 1);
+    PelletType = 'Prot'
+    EndTime = millis();
+
 
 //Read battery level
 void FED3::ReadBatteryLevel() {
