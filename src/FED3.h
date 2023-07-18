@@ -85,7 +85,7 @@ class FED3 {
         File configfile;    // Create another file object
         File startfile;     // Create another file object
         File stopfile;      // Create another file object
-        char filename[21];  // Array for file name data logged to named in setup
+        char filename[25];  // Array for file name data logged to named in setup
         void logdata();
         void CreateFile();
         void CreateDataFile ();
@@ -204,6 +204,7 @@ class FED3 {
         unsigned long currentSecond;
         unsigned long displayupdate;
         String Event = "None";   //What kind of event just happened?
+        String PelletType = "None";
         
         // timing variables
         int retInterval = 0;

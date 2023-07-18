@@ -983,10 +983,10 @@ void FED3::logdata() {
   SD.begin(cardSelect, SD_SCK_MHZ(4));
   
   //fix filename (the .CSV extension can become corrupted) and open file
-  filename[16] = '.';
-  filename[17] = 'C';
-  filename[18] = 'S';
-  filename[19] = 'V';
+  filename[20] = '.';
+  filename[21] = 'C';
+  filename[22] = 'S';
+  filename[23] = 'V';
   logfile = SD.open(filename, FILE_WRITE);
 
   //if FED3 cannot open file put SD card icon on screen 
@@ -1198,7 +1198,7 @@ void FED3::error(uint8_t errno) {
 // then an incrementing number for each new file created on the same date
 void FED3::getFilename(char *filename) {
   DateTime now = rtc.now();
-  PelletType = '????'
+  PelletType = "none";
 
   filename[3] = FED / 100 + '0';
   filename[4] = FED / 10 + '0';
@@ -1209,7 +1209,10 @@ void FED3::getFilename(char *filename) {
   filename[10] = now.day() % 10 + '0';
   filename[11] = (now.year() - 2000) / 10 + '0';
   filename[12] = (now.year() - 2000) % 10 + '0';
-  filename[16:20] = PelletType
+  filename[16] = PelletType[0];
+  filename[17] = PelletType[1];
+  filename[18] = PelletType[2];
+  filename[19] = PelletType[3];
   filename[20] = '.';
   filename[21] = 'C';
   filename[22] = 'S';
@@ -1340,7 +1343,7 @@ void FED3::SetDeviceNumber() {
           display.refresh();
         }
       }
-
+      millis();
       ///////////////////////////////////
       ///////  ADJUST PELLET TYPE ///////
       while (millis() - EndTime < 3000) { 
@@ -1418,13 +1421,21 @@ void FED3::SetPellet(){
   display.print ("LeftPoke if Sucrose, RightPoke if Protein");
   if (digitalRead(LEFT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
-    PelletType = 'Sucr'
+    PelletType = "Sucr";
+    display.print ("Sucrose selected !");
+    delay(1000);
+    display(refresh);
     EndTime = millis();
     }
   if (digitalRead(RIGHT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
-    PelletType = 'Prot'
+    PelletType = "Prot";
+    display.print ("Protein selected !");
+    delay(1000);
+    display(refresh);
     EndTime = millis();
+    }
+  }
 
 
 //Read battery level
