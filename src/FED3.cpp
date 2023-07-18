@@ -1424,7 +1424,7 @@ void FED3::SetPellet(){
     PelletType = "Sucr";
     display.print ("Sucrose selected !");
     delay(1000);
-    display(refresh);
+    display.refresh();
     EndTime = millis();
     }
   if (digitalRead(RIGHT_POKE) == LOW) {
@@ -1432,7 +1432,7 @@ void FED3::SetPellet(){
     PelletType = "Prot";
     display.print ("Protein selected !");
     delay(1000);
-    display(refresh);
+    display.refresh();
     EndTime = millis();
     }
   }
