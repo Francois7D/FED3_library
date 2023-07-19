@@ -1360,7 +1360,7 @@ void FED3::SetDeviceNumber() {
       display.setCursor(5, 105);
       display.println("...PelletType is set!");
       display.refresh();
-      delay (1000);
+      delay (500);
 
 
       writeFEDmode();
@@ -1425,6 +1425,9 @@ void FED3::SetClock(){
 //set PelletType
 void FED3::SetPellet(){
   display.setCursor(6, 15);
+  display.print ("Set PelletType");
+  //delay(400);
+  display.setCursor(6, 35);
   display.print ("LeftPoke if Sucrose, RightPoke if Protein");
   //display.refresh();
   delay (50);
@@ -1443,21 +1446,21 @@ void FED3::SetPellet(){
     tone (BUZZER, 800, 1);
     PelletType = "Sucr";
     display.clearDisplay();
-    display.setCursor(25, 60);
+    display.setCursor(25, 80);
     display.print ("Sucrose selected");
     //display.refresh();
     EndTime = millis();
-    delay(500);
+    delay(1000);
     }
   if (digitalRead(RIGHT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
     PelletType = "Prot";
-    display.setCursor(25, 60);
+    display.setCursor(25, 80);
     display.clearDisplay();
     display.print ("Protein selected");
     //display.refresh();
     EndTime = millis();
-    delay(500);
+    delay(1000);
     }
   display.refresh();
   }
