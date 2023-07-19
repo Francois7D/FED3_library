@@ -1294,13 +1294,15 @@ void FED3::SetDeviceNumber() {
       display.println("...Clock is set!");
       display.refresh();
       delay (1000);
+      display.clearDisplay();
+      display.refresh();
 
       ///////////////////////////////////
-      
+      EndTime = millis(); // Needed to make the all thing work !! wasnt here so older endtime was taken in count and the function was skipped 
       while (setTimed == true) {
         // set timed feeding start and stop
         display.fillRect (5, 56, 120, 18, WHITE);
-        delay (200);
+        delay (100);
         display.refresh();
 
         display.fillRect (0, 0, 200, 80, WHITE);
@@ -1311,7 +1313,7 @@ void FED3::SetDeviceNumber() {
         display.print(":00 - ");
         display.print(timedEnd);
         display.print(":00");
-        delay (50);
+        delay (100);
         display.refresh();
 
         if (digitalRead(LEFT_POKE) == LOW) {
@@ -1339,13 +1341,17 @@ void FED3::SetDeviceNumber() {
           setTimed = false;
           display.setCursor(5, 95);
           display.println("...Timing set!");
-          delay (1000);
           display.refresh();
+          delay (1000);
+          display.clearDisplay();
+          display.refresh();  
+          
         }
       }
-      millis();
+      
       ///////////////////////////////////
       ///////  ADJUST PELLET TYPE ///////
+      EndTime = millis();
       while (millis() - EndTime < 3000) { 
         SetPellet();
         delay (10);
@@ -1418,23 +1424,42 @@ void FED3::SetClock(){
 
 //set PelletType
 void FED3::SetPellet(){
+  display.setCursor(6, 15);
   display.print ("LeftPoke if Sucrose, RightPoke if Protein");
+  //display.refresh();
+  delay (50);
+  //display.clearDisplay();
+  //display.refresh();  
+  //if ( PelletType = "Prot") 
+    //display.print ("Protein selected !");
+    //display.refresh();
+  
+  //if ( PelletType = "Sucr") 
+    //display.print ("Sucrose selected !");
+    //display.refresh();
+  
+
   if (digitalRead(LEFT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
     PelletType = "Sucr";
-    display.print ("Sucrose selected !");
-    delay(1000);
-    display.refresh();
+    display.clearDisplay();
+    display.setCursor(25, 60);
+    display.print ("Sucrose selected");
+    //display.refresh();
     EndTime = millis();
+    delay(500);
     }
   if (digitalRead(RIGHT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
     PelletType = "Prot";
-    display.print ("Protein selected !");
-    delay(1000);
-    display.refresh();
+    display.setCursor(25, 60);
+    display.clearDisplay();
+    display.print ("Protein selected");
+    //display.refresh();
     EndTime = millis();
+    delay(500);
     }
+  display.refresh();
   }
 
 
