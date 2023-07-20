@@ -1198,7 +1198,7 @@ void FED3::error(uint8_t errno) {
 // then an incrementing number for each new file created on the same date
 void FED3::getFilename(char *filename) {
   DateTime now = rtc.now();
-  PelletType = "none";
+  //PelletType = "none";
 
   filename[3] = FED / 100 + '0';
   filename[4] = FED / 10 + '0';
@@ -1209,7 +1209,7 @@ void FED3::getFilename(char *filename) {
   filename[10] = now.day() % 10 + '0';
   filename[11] = (now.year() - 2000) / 10 + '0';
   filename[12] = (now.year() - 2000) % 10 + '0';
-  filename[16] = PelletType[0];
+  filename[16] = PelletType[0];// Try and convert these to char* !!
   filename[17] = PelletType[1];
   filename[18] = PelletType[2];
   filename[19] = PelletType[3];
@@ -1356,7 +1356,7 @@ void FED3::SetDeviceNumber() {
         SetPellet();
         delay (10);
       }
-
+      
       display.setCursor(5, 105);
       display.println("...PelletType is set!");
       display.refresh();
@@ -1445,6 +1445,17 @@ void FED3::SetPellet(){
   if (digitalRead(LEFT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
     PelletType = "Sucr";
+    
+    //getFilename(filename);
+    filename[16] = 'S';
+    filename[17] = 'u';
+    filename[18] = 'c';
+    filename[19] = 'r';
+    SD.begin(cardSelect, SD_SCK_MHZ(4));
+    logfile = SD.open(filename, FILE_WRITE);
+    logfile.flush();
+    logfile.close();
+ 
     display.clearDisplay();
     display.setCursor(25, 80);
     display.print ("Sucrose selected");
@@ -1455,6 +1466,17 @@ void FED3::SetPellet(){
   if (digitalRead(RIGHT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
     PelletType = "Prot";
+    
+    //getFilename(filename);
+    filename[16] = 'P';
+    filename[17] = 'r';
+    filename[18] = 'o';
+    filename[19] = 't';
+    SD.begin(cardSelect, SD_SCK_MHZ(4));
+    logfile = SD.open(filename, FILE_WRITE);
+    logfile.flush();
+    logfile.close();
+ 
     display.setCursor(25, 80);
     display.clearDisplay();
     display.print ("Protein selected");
