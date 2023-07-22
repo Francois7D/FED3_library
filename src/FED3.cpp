@@ -1196,7 +1196,7 @@ void FED3::error(uint8_t errno) {
 // starts with the letters: "FED_" 
 // then the date in MMDDYY followed by "_"
 // then an incrementing number for each new file created on the same date
-void FED3::getFilename(char *filename) {
+void FED3::getFilename(char *filename, PelletType) {
   DateTime now = rtc.now();
   //PelletType = "none";
 
@@ -1209,10 +1209,22 @@ void FED3::getFilename(char *filename) {
   filename[10] = now.day() % 10 + '0';
   filename[11] = (now.year() - 2000) / 10 + '0';
   filename[12] = (now.year() - 2000) % 10 + '0';
-  filename[16] = PelletType[0];// Try and convert these to char* !!
-  filename[17] = PelletType[1];
-  filename[18] = PelletType[2];
-  filename[19] = PelletType[3];
+  //filename[16] = PelletType[0];// Try and convert these to char* !!
+  //filename[17] = PelletType[1];
+  //filename[18] = PelletType[2];
+  //filename[19] = PelletType[3];
+  if (PelletType == "P") {
+    filename[16] = 'P';
+    filename[17] = 'r';
+    filename[18] = 'o';
+    filename[19] = 't';
+  }
+  if (PelletType == "S") {
+    filename[16] = 'S';
+    filename[17] = 'u';
+    filename[18] = 'c';
+    filename[19] = 'r';
+  }
   filename[20] = '.';
   filename[21] = 'C';
   filename[22] = 'S';
@@ -1353,7 +1365,7 @@ void FED3::SetDeviceNumber() {
       ///////  ADJUST PELLET TYPE ///////
       EndTime = millis();
       while (millis() - EndTime < 3000) { 
-        SetPellet();
+        SetPellet(PelletType);
         delay (10);
       }
       
@@ -1423,7 +1435,7 @@ void FED3::SetClock(){
 }
 
 //set PelletType
-void FED3::SetPellet(){
+void FED3::SetPellet(String& PelletType){
   display.setCursor(6, 15);
   display.print ("Set PelletType");
   //delay(400);
@@ -1444,17 +1456,17 @@ void FED3::SetPellet(){
 
   if (digitalRead(LEFT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
-    PelletType = "Sucr";
+    PelletType = "S";
     
     //getFilename(filename);
-    filename[16] = 'S';
-    filename[17] = 'u';
-    filename[18] = 'c';
-    filename[19] = 'r';
-    SD.begin(cardSelect, SD_SCK_MHZ(4));
-    logfile = SD.open(filename, FILE_WRITE);
-    logfile.flush();
-    logfile.close();
+    //filename[16] = 'S';
+    //filename[17] = 'u';
+    //filename[18] = 'c';
+    //filename[19] = 'r';
+    //SD.begin(cardSelect, SD_SCK_MHZ(4));
+    //logfile = SD.open(filename, FILE_WRITE);
+    //logfile.flush();
+    //ogfile.close();
  
     display.clearDisplay();
     display.setCursor(25, 80);
@@ -1465,17 +1477,17 @@ void FED3::SetPellet(){
     }
   if (digitalRead(RIGHT_POKE) == LOW) {
     tone (BUZZER, 800, 1);
-    PelletType = "Prot";
+    PelletType = "P";
     
     //getFilename(filename);
-    filename[16] = 'P';
-    filename[17] = 'r';
-    filename[18] = 'o';
-    filename[19] = 't';
-    SD.begin(cardSelect, SD_SCK_MHZ(4));
-    logfile = SD.open(filename, FILE_WRITE);
-    logfile.flush();
-    logfile.close();
+    //filename[16] = 'P';
+    //filename[17] = 'r';
+    //filename[18] = 'o';
+    //filename[19] = 't';
+    //SD.begin(cardSelect, SD_SCK_MHZ(4));
+    //logfile = SD.open(filename, FILE_WRITE);
+    //logfile.flush();
+    //logfile.close();
  
     display.setCursor(25, 80);
     display.clearDisplay();
@@ -1484,6 +1496,7 @@ void FED3::SetPellet(){
     EndTime = millis();
     delay(1000);
     }
+
   display.refresh();
   }
 

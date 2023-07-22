@@ -93,7 +93,7 @@ class FED3 {
         void writeConfigFile();
         void writeFEDmode();
         void error(uint8_t errno);
-        void getFilename(char *filename);
+        void getFilename(char *filename, PelletType);
         bool suppressSDerrors = false;  //set to true to suppress SD card errors at startup 
 
         // Battery
@@ -130,7 +130,7 @@ class FED3 {
         void StartScreen();
         void FED3MenuScreen();
         void SetClock();
-        void SetPellet();
+        void SetPellet(String& PelletType);
         
         //BNC input/output
 		void ReadBNC(bool blinkGreen);
