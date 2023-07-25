@@ -86,7 +86,7 @@ class FED3 {
         File startfile;     // Create another file object
         File stopfile;      // Create another file object
         File Pelletfile;    // Create another file object *new*
-        char filename[25];  // Array for file name data logged to named in setup
+        char filename[24];  // Array for file name data logged to named in setup
         void logdata();
         void CreateFile();
         void CreateDataFile ();
@@ -145,6 +145,7 @@ class FED3 {
         // Set FED
         void SelectMode();
         void SetDeviceNumber();
+        String FigureToPellet(int a);
 
         // Stimuli
         void ConditionedStimulus(int duration = 200);

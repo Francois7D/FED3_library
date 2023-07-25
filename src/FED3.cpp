@@ -937,7 +937,7 @@ void FED3::CreateFile() {
   Pelletfile.close();
 
   // Name filename in format F###_MMDDYYNN, where MM is month, DD is day, YY is year, and NN is an incrementing number for the number of files initialized each day
-  strcpy(filename, "FED_________________.CSV");  // placeholder filename
+  strcpy(filename, "FED_______________.CSV");  // placeholder filename
   getFilename(filename);
 }
 
@@ -998,10 +998,10 @@ void FED3::logdata() {
   SD.begin(cardSelect, SD_SCK_MHZ(4));
   
   //fix filename (the .CSV extension can become corrupted) and open file
-  filename[20] = '.';
-  filename[21] = 'C';
-  filename[22] = 'S';
-  filename[23] = 'V';
+  filename[19] = '.';
+  filename[20] = 'C';
+  filename[21] = 'S';
+  filename[22] = 'V';
   logfile = SD.open(filename, FILE_WRITE);
 
   //if FED3 cannot open file put SD card icon on screen 
@@ -1214,7 +1214,6 @@ void FED3::error(uint8_t errno) {
 void FED3::getFilename(char *filename) {
   DateTime now = rtc.now();
   //PelletType = 1 ;
-  FED = 300;
   filename[3] = FED / 100 + '0';
   filename[4] = FED / 10 + '0';
   filename[5] = FED % 10 + '0';
@@ -1228,22 +1227,12 @@ void FED3::getFilename(char *filename) {
   //filename[17] = PelletType[1];
   //filename[18] = PelletType[2];
   //filename[19] = PelletType[3];
-  if (PelletType == 1) {
-    filename[16] = 'S';
-    filename[17] = 'u';
-    filename[18] = 'c';
-    filename[19] = 'r';
-  }
-  if (PelletType == 2) {
-    filename[16] = 'P';
-    filename[17] = 'r';
-    filename[18] = 'o';
-    filename[19] = 't';
-  }
-  filename[20] = '.';
-  filename[21] = 'C';
-  filename[22] = 'S';
-  filename[23] = 'V';
+  filename[17] = FigureToPellet(PelletType)[0];
+  filename[18] = FigureToPellet(PelletType)[1];
+  filename[19] = '.';
+  filename[20] = 'C';
+  filename[21] = 'S';
+  filename[22] = 'V';
   for (uint8_t i = 0; i < 100; i++) {
     filename[14] = '0' + i / 10;
     filename[15] = '0' + i % 10;
@@ -1381,40 +1370,45 @@ void FED3::SetDeviceNumber() {
       
       EndTime = millis();
       while (SetPel == true) {
-        display.setCursor(6, 15);
-        display.print ("Set PelletType");
-        //delay(400);
-        display.setCursor(6, 35);
-        display.print ("LeftPoke if Sucrose, RightPoke if Protein");
-        //display.refresh();
-        delay (50);
-        if (digitalRead(LEFT_POKE) == LOW) {
-          tone (BUZZER, 800, 1);
-          PelletType = 1;
-          display.clearDisplay();
-          display.setCursor(25, 80);
-          display.print ("Sucrose selected");
-          //display.refresh();
-          EndTime = millis();
-          delay(1000);
-          }
+        //adjust PelletType
+        display.fillRect (0, 0, 200, 80, WHITE);
+        display.setCursor(5, 46);
+        display.println("Set PelletType");
+        display.fillRect (36, 122, 180, 28, WHITE);
+        delay (100);
+        display.refresh();
+
+        display.setCursor(6, 75);
+        display.print (FigureToPellet(PelletType));
+        delay (100);
+        display.refresh();
+        //PelletType = 1;
         if (digitalRead(RIGHT_POKE) == LOW) {
-          tone (BUZZER, 800, 1);
-          PelletType = 2;
-          display.setCursor(25, 80);
-          display.clearDisplay();
-          display.print ("Protein selected");
-          //display.refresh();
+          PelletType += 1;
+          Click();
           EndTime = millis();
-          delay(1000);
+          if (PelletType > 6) {
+            PelletType = 1;
           }
+        }
+        if (digitalRead(LEFT_POKE) == LOW) {
+          PelletType -= 1;
+          Click();
+          EndTime = millis();
+          if (PelletType < 1) {
+            PelletType = 6;
+          };
+        }
         if (millis() - EndTime > 3000) {  // if 3 seconds passes confirm time settings
           SetPel = false;
-          display.setCursor(5, 95);
+          display.setCursor(5, 105);
           display.println("... set!");
-          
-          delay (1000);
           display.refresh();
+          delay (1000);
+          EndTime = millis();
+          display.clearDisplay();
+          display.refresh();
+
           writeFEDmode();
           writeConfigFile();
           writePelletFile();
@@ -1437,6 +1431,27 @@ void FED3::SetDeviceNumber() {
       //writeConfigFile();
       //NVIC_SystemReset();      // processor software reset
     }
+  }
+}
+
+String FED3::FigureToPellet(int a){
+  if (a==1) {
+    return ("A1");
+  }
+  if (a==2) {
+    return ("A2");
+  }
+  if (a==3) {
+    return ("A3");
+  }
+  if (a==4) {
+    return ("A4");
+  }
+  if (a==5) {
+    return ("A5");
+  }
+  else {
+    return ("A6");
   }
 }
 
