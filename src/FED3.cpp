@@ -1409,12 +1409,13 @@ void FED3::SetDeviceNumber() {
           display.clearDisplay();
           display.refresh();
 
-          writeFEDmode();
-          writeConfigFile();
-          writePelletFile();
-          NVIC_SystemReset();
+          
         }
       }
+      writeFEDmode();
+      writeConfigFile();
+      writePelletFile();
+      NVIC_SystemReset();
       //EndTime = millis();
       //while (millis() - EndTime < 3000) { 
       //  String PelletType = SetPellet();
@@ -1436,22 +1437,22 @@ void FED3::SetDeviceNumber() {
 
 String FED3::FigureToPellet(int a){
   if (a==1) {
-    return ("A1");
+    return ("MX");
   }
   if (a==2) {
-    return ("A2");
+    return ("20");
   }
   if (a==3) {
-    return ("A3");
+    return ("5%");
   }
   if (a==4) {
-    return ("A4");
+    return ("35");
   }
   if (a==5) {
-    return ("A5");
+    return ("SU");
   }
   else {
-    return ("A6");
+    return ("GR");
   }
 }
 
