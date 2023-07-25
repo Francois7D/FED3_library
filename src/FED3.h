@@ -85,12 +85,14 @@ class FED3 {
         File configfile;    // Create another file object
         File startfile;     // Create another file object
         File stopfile;      // Create another file object
+        File Pelletfile;    // Create another file object *new*
         char filename[25];  // Array for file name data logged to named in setup
         void logdata();
         void CreateFile();
         void CreateDataFile ();
         void writeHeader();
         void writeConfigFile();
+        void writePelletFile();
         void writeFEDmode();
         void error(uint8_t errno);
         void getFilename(char *filename);
@@ -181,6 +183,7 @@ class FED3 {
 
         // mode variables
         int FED;
+        int PelletType;
         int FR = 1;
         bool DisplayPokes = true;
         bool DisplayTimed = false;
@@ -204,7 +207,6 @@ class FED3 {
         unsigned long currentSecond;
         unsigned long displayupdate;
         String Event = "None";   //What kind of event just happened?
-        String PelletType = "None";
         
         // timing variables
         int retInterval = 0;
@@ -233,6 +235,7 @@ class FED3 {
 
         bool SetFED = false;
         bool setTimed = false;
+        bool SetPel = false;
         
         // Neopixel strip
         Adafruit_NeoPixel strip = Adafruit_NeoPixel(10, NEOPIXEL, NEO_GRBW + NEO_KHZ800);
