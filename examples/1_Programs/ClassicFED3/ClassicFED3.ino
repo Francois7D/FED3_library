@@ -266,8 +266,8 @@ void loop() {
           pellets_in_current_block++;                      //increment the pellet number by 1
           fed3.BlockPelletCount = pellets_in_current_block;
           fed3.Feed();                                     //Deliver pellet
-          fed3.BNC(500, 1);                                //Send 500ms pulse to the BNC output when pellet is detected (move this line to deliver this pulse elsewhere)
-          pokes_required += 1;                             //Edit this line to change the PR incremementing formula.  Default is for each pellet add 1 to the pokes required.
+          //fed3.BNC(500, 1);                                //Send 500ms pulse to the BNC output when pellet is detected (move this line to deliver this pulse elsewhere)
+          pokes_required += 2;                             //Edit this line to change the PR incremementing formula.  Default is for each pellet add 1 to the pokes required.
           fed3.FR = pokes_required;                        //Update the FR requirement in the functions in the FED3 library
           poke_num = 0;                                    //reset poke_num to 0
         }
