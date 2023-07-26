@@ -997,7 +997,7 @@ void FED3::writeConfigFile() {
   configfile.close();
 }
 
-//write a Pelletfile (this contains the Pellet Type)
+//write a Pelletfile (this contains the Pellet Type Number)
 void FED3::writePelletFile() {
   digitalWrite (MOTOR_ENABLE, LOW);  //Disable motor driver and neopixel
   Pelletfile = SD.open("Pelletfile.csv", FILE_WRITE);
@@ -1240,10 +1240,6 @@ void FED3::getFilename(char *filename) {
   filename[10] = now.day() % 10 + '0';
   filename[11] = (now.year() - 2000) / 10 + '0';
   filename[12] = (now.year() - 2000) % 10 + '0';
-  //filename[16] = PelletType[0];// Try and convert these to char* !!
-  //filename[17] = PelletType[1];
-  //filename[18] = PelletType[2];
-  //filename[19] = PelletType[3];
   filename[17] = FigureToPellet(PelletType)[0];
   filename[18] = FigureToPellet(PelletType)[1];
   filename[19] = '.';
@@ -1433,25 +1429,11 @@ void FED3::SetDeviceNumber() {
       writeConfigFile();
       writePelletFile();
       NVIC_SystemReset();
-      //EndTime = millis();
-      //while (millis() - EndTime < 3000) { 
-      //  String PelletType = SetPellet();
-      //  delay (10);
-      //}
-      
-      //display.setCursor(5, 105);
-      //display.println("...PelletType is set!");
-      //display.refresh();
-      //delay (500);
-
-
-      //writeFEDmode();
-      //writeConfigFile();
-      //NVIC_SystemReset();      // processor software reset
     }
   }
 }
 
+//Convert the Pellet Type number into a two characters code
 String FED3::FigureToPellet(int a){
   if (a==1) {
     return ("MX");
@@ -1469,7 +1451,7 @@ String FED3::FigureToPellet(int a){
     return ("SU");
   }
   else {
-    return ("GR");
+    return ("GR");//if a==6
   }
 }
 
@@ -1524,77 +1506,6 @@ void FED3::SetClock(){
     EndTime = millis();
   }
 }
-
-//set PelletType
-//String FED3::SetPellet(){
-  //EndTime = millis();
-  //while (millis() - EndTime < 3000) 
-    //String PelletType = "None";
-    //display.setCursor(6, 15);
-    //display.print ("Set PelletType");
-    ////delay(400);
-    //display.setCursor(6, 35);
-    //display.print ("LeftPoke if Sucrose, RightPoke if Protein");
-    ////display.refresh();
-    //delay (50);
-    ////display.clearDisplay();
-    ////display.refresh();  
-    ////if ( PelletType = "Prot") 
-      ////display.print ("Protein selected !");
-      ////display.refresh();
-
-    ////if ( PelletType = "Sucr") 
-      ////display.print ("Sucrose selected !");
-      ////display.refresh();
-
-
-    //if (digitalRead(LEFT_POKE) == LOW) {
-      //tone (BUZZER, 800, 1);
-      //String PelletType = "S";
-
-      ////getFilename(filename);
-      ////filename[16] = 'S';
-      ////filename[17] = 'u';
-      ////filename[18] = 'c';
-      ////filename[19] = 'r';
-      ////SD.begin(cardSelect, SD_SCK_MHZ(4));
-      ////logfile = SD.open(filename, FILE_WRITE);
-      ////logfile.flush();
-      ////ogfile.close();
-  
-      //display.clearDisplay();
-      //display.setCursor(25, 80);
-      //display.print ("Sucrose selected");
-      ////display.refresh();
-      //EndTime = millis();
-      //delay(1000);
-      //}
-    //if (digitalRead(RIGHT_POKE) == LOW) {
-      //tone (BUZZER, 800, 1);
-      //String PelletType = "P";
-
-      ////getFilename(filename);
-      ////filename[16] = 'P';
-      ////filename[17] = 'r';
-      ////filename[18] = 'o';
-      ////filename[19] = 't';
-      ////SD.begin(cardSelect, SD_SCK_MHZ(4));
-      ////logfile = SD.open(filename, FILE_WRITE);
-      ////logfile.flush();
-      ////logfile.close();
-  
-      //display.setCursor(25, 80);
-      //display.clearDisplay();
-      //display.print ("Protein selected");
-      ////display.refresh();
-      //EndTime = millis();
-      //delay(1000);
-      //}
-
-    //display.refresh();
-    //return (PelletType); 
-    //}
-
 
 //Read battery level
 void FED3::ReadBatteryLevel() {
