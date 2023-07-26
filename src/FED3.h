@@ -132,7 +132,7 @@ class FED3 {
         void StartScreen();
         void FED3MenuScreen();
         void SetClock();
-        String SetPellet();
+        //String SetPellet();
         
         //BNC input/output
 		void ReadBNC(bool blinkGreen);
@@ -152,6 +152,7 @@ class FED3 {
         void Click();
         void Noise(int duration = 200);
         void BNC(int DELAY_MS, int loops);
+        void Alarm();
         void pulseGenerator(int pulse_width, int frequency, int repetitions);
 
         void Tone(int freq, int duration);

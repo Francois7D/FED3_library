@@ -250,15 +250,20 @@ void FED3::Feed(int pulse, bool pixelsoff) {
           if (numMotorTurns % 5 == 0) {
             pelletDispensed = MinorJam();
           }
-	   }
+	      }
         if (pelletDispensed == false) {
           if (numMotorTurns % 10 == 0 and numMotorTurns % 20 != 0) {
             pelletDispensed = VibrateJam();
           }
-	   }
+	      }
         if (pelletDispensed == false) {
           if (numMotorTurns % 20 == 0) {
             pelletDispensed = ClearJam();
+          }
+        }
+        if (pelletDispensed == false) {
+          if (numMotorTurns % 30 == 0) {
+            Alarm();
           }
         }
     }
@@ -547,6 +552,18 @@ void FED3::BNC(int DELAY_MS, int loops) {
     digitalWrite(BNC_OUT, LOW);
     digitalWrite(GREEN_LED, LOW);
     delay(DELAY_MS);
+  }
+}
+
+//Simple function for blinking LED via BNC port when alarm needed
+void FED3::Alarm() {
+  while (true)  {
+    digitalWrite(BNC_OUT, HIGH);
+    digitalWrite(GREEN_LED, HIGH);
+    delay(200);
+    digitalWrite(BNC_OUT, LOW);
+    digitalWrite(GREEN_LED, LOW);
+    delay(120);
   }
 }
 
